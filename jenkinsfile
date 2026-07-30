@@ -2,8 +2,10 @@ pipeline {
     agent any
 
     environment{
-        EMAIL_ADDRESS = credentials('email-address')
-        EMAIL_PASSWORD = credentials('email-password')
+        LANDLORD_EMAIL = credentials('landlord_email')
+        LANDLORD_PASSWORD = credentials('landlord_password')
+        ADMIN_EMAIL = credentials('admin_email')
+        ADMIN_PASSWORD = credentials('admin_password')
     }
 
     stages {
