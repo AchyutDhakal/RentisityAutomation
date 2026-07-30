@@ -2,7 +2,7 @@ from pages.add_property import AddProperty
 import pytest
 import allure
 from utils.test_runner import create_driver
-from data.single_tenant_data import PROPERTY_DATA
+from data.property_data import PROPERTY_DATA
 from pages.login_page import LoginPage
 from config import LANDLORD_EMAIL, LANDLORD_PASSWORD, ADMIN_EMAIL, ADMIN_PASSWORD
 from utils.assertions import assert_equal
