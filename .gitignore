@@ -21,3 +21,5 @@ reports/
 *.msi
 *.tgz
 *.zip
+
+practice.py
