@@ -1,6 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 import allure
 import os
 import time
@@ -14,7 +14,7 @@ class BasePage:
     # OVERLAY = (By.XPATH, "//div[contains(@class,'backdrop-blur-sm') and contains(@class,'opacity-100')]")
     def __init__(self,driver):
         self.driver = driver
-        timeout = 60 if os.environ.get("JENKINS_URL") else 20
+        timeout = 60 if os.environ.get("JENKINS_URL") else 60
         self.wait = WebDriverWait(driver, timeout)
 
     def find_element(self,locator):
@@ -363,8 +363,9 @@ class BasePage:
                     pass
 
 
+
+
     def upload_property_photo(self, file_path, upload_photo):
-        import os
         assert os.path.exists(file_path), f"File not found: {file_path}"
 
         element = self.wait.until(EC.element_to_be_clickable(upload_photo))

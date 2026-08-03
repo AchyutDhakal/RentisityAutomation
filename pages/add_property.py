@@ -75,8 +75,11 @@ class AddProperty(BasePage):
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)
     self.upload_property_photo(file_path, self.UPLOAD_PHOTO)
+    self.take_screenshot("after_upload")
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)
+
+
     self.click_element(self.GENERATE_DESCRIPTION_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)
@@ -85,6 +88,7 @@ class AddProperty(BasePage):
     self.wait.until(EC.visibility_of_element_located(self.CROSS_BUTTON))
     self.click_element(self.CROSS_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.SEND_FOR_REVIEW_BUTTON))
+
 
 
   def review_property(self, admin_email, admin_password, driver):
