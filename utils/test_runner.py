@@ -14,7 +14,6 @@ def create_driver():
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-password-manager-reauthentication")
 
-    # Unique profile per run — prevents profile lock conflicts
     tmpdir = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={tmpdir}")
 

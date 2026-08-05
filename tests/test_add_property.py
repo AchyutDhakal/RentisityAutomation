@@ -27,7 +27,7 @@ class TestAddProperty:
 
     with allure.step("Adding a single tenant property"):
       self.add_property.navigate_to_add_property()
-      self.add_property.enter_property_details(property_data["address"], property_data["title"], property_data["area"], property_data["rent_per_month"], property_data["file_path"])
+      self.add_property.enter_property_details(property_data["address"], property_data["title"], property_data["area"], property_data["rent_per_month"], property_data["file_path"], property_type="multiple", payment_responsibility="lead", contracted_tenants="lead_tenant")
 
     with allure.step("Reviewing the property from the admin panel"):
       self.add_property.review_property(ADMIN_EMAIL, ADMIN_PASSWORD, self.driver)

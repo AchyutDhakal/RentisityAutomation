@@ -1,8 +1,10 @@
 import time
 import os
+import random
 
+random_int = random.randint(1,6)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEST_IMAGE_PATH = os.path.join(BASE_DIR, 'images', 'person.png')
+TEST_IMAGE_PATH = os.path.join(BASE_DIR, 'images', f'House_{random_int}.png')
 
 PROPERTY_DATA = [
   {

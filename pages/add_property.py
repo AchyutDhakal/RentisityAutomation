@@ -37,6 +37,16 @@ class AddProperty(BasePage):
   YES_REVIEW_BUTTON = (By.XPATH, "//div[@class='css-g5y9jx r-13awgt0 r-ipm5af']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx r-1loqt21 r-1otgn73']")
   ACCEPT_BUTTON_CONTAINER = (By.XPATH,"//div[@class='sc-eEHciv hKSwDo']")
   PROPERTIES_COUNT_1 = (By.XPATH, "//div[normalize-space()='Properties: 1']")
+  MAXIMUM_OCCUPANCY = (By.XPATH, "(//div[contains(., 'Occupancy')]//div[@tabindex='0'][contains(@style,'border-radius: 100px')])[3]")
+  MULTIPLE_TENANTS = (By.XPATH, "//div[contains(text(),'Multiple Tenants (e.g., Roommates)')]")
+  GROUP_CREATOR_LANDLORD = (By.XPATH, "//div[@class='css-g5y9jx r-1ssbvtb']//div[@class='css-146c3p1'][normalize-space()='Landlord']")
+  PAYMENT_RESPONSIBILITY_INDIVIDUAL = (By.XPATH, "//div[@class='css-g5y9jx r-1ssbvtb']//div[@class='css-146c3p1'][normalize-space()='Individual']")
+  CONTRACTED_TENANTS_EVERYONE = (By.XPATH, "//div[contains(text(),'Everyone')]")
+  CONTRACTED_TENANTS_LEAD_TENANT = (By.XPATH, "//div[contains(text(),'Lead Tenant')]")
+  PAYMENT_RESPONSIBILITY_LEAD = (By.XPATH,"//div[@class='css-146c3p1'][normalize-space()='Lead']")
+
+
+
 
 
 
@@ -45,7 +55,7 @@ class AddProperty(BasePage):
     self.click_element(self.ADD_PROPERTY)
 
 
-  def enter_property_details(self, address, title, area, rent_per_month, file_path):
+  def enter_property_details(self, address, title, area, rent_per_month, file_path, property_type="single", group_creator = "tenant", payment_responsibility="lead", contracted_tenants="everyone"):
     self.enter_text(self.SEARCH_ADDRESS_INPUT, address)
     self.wait.until(EC.element_to_be_clickable(self.ADDRESS))
     self.click_element(self.ADDRESS)
@@ -61,6 +71,16 @@ class AddProperty(BasePage):
     self.click_element(self.PROPERTY_TYPE)
     self.click_element(self.FURNISHED_TYPE)
     self.click_element(self.RENTAL_MARKET)
+
+    if property_type != "single":
+      self.wait.until(EC.element_to_be_clickable(self.MAXIMUM_OCCUPANCY))
+      # time.sleep(5)
+      self.click_element(self.MAXIMUM_OCCUPANCY)
+      # time.sleep(5)
+      # self.click_element(self.MAXIMUM_OCCUPANCY)
+      # time.sleep(5)
+
+
     self.click_element(self.BER_CERTIFICATE)
     self.click_element(self.AREA_DIV)
     self.enter_text(self.AREA_INPUT, area)
@@ -75,7 +95,6 @@ class AddProperty(BasePage):
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)
     self.upload_property_photo(file_path, self.UPLOAD_PHOTO)
-    self.take_screenshot("after_upload")
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)
 
@@ -85,6 +104,24 @@ class AddProperty(BasePage):
     self.click_element(self.NEXT_BUTTON)
     time.sleep(1)
     self.click_element(self.NEXT_BUTTON)
+
+    if property_type != "single":
+      self.click_element(self.MULTIPLE_TENANTS)
+
+      if group_creator != "tenant":
+        self.click_element(self.GROUP_CREATOR_LANDLORD)
+
+      if payment_responsibility != "lead":
+        self.click_element(self.PAYMENT_RESPONSIBILITY_INDIVIDUAL)
+
+      else:
+        self.click_element(self.PAYMENT_RESPONSIBILITY_LEAD)
+
+      if contracted_tenants != "everyone":
+        self.click_element(self.CONTRACTED_TENANTS_LEAD_TENANT)
+
+      self.click_element(self.NEXT_BUTTON)
+
     self.wait.until(EC.visibility_of_element_located(self.CROSS_BUTTON))
     self.click_element(self.CROSS_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.SEND_FOR_REVIEW_BUTTON))

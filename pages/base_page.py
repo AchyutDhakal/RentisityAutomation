@@ -14,7 +14,7 @@ class BasePage:
     # OVERLAY = (By.XPATH, "//div[contains(@class,'backdrop-blur-sm') and contains(@class,'opacity-100')]")
     def __init__(self,driver):
         self.driver = driver
-        timeout = 60 if os.environ.get("JENKINS_URL") else 60
+        timeout = 60 if os.environ.get("JENKINS_URL") else 20
         self.wait = WebDriverWait(driver, timeout)
 
     def find_element(self,locator):
