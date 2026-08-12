@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
+import time
 
 class LoginPage(BasePage):
   SIGN_IN_BUTTON = (By.XPATH,"//div[@tabindex='0' and .//div[contains(normalize-space(text()), 'Sign In')]]")

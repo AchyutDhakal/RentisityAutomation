@@ -8,7 +8,7 @@ class AddProperty(BasePage):
   SEARCH_ADDRESS_INPUT = (By.XPATH,"//input[@placeholder='Search Address']")
   TITLE_INPUT = (By.XPATH,"//input[@placeholder='Enter Title For this property']")
   AVAILABLE_DATE = (By.XPATH,"(//div[normalize-space()='Availability Date'])[1]")
-  SET_BUTTON = (By.XPATH,"(//div[@tabindex='0'][.//div[contains(text(), 'Set')]])[2]")
+  SET_BUTTON = (By.XPATH,"//div[@class='css-146c3p1'][normalize-space()='Set']")
   PROPERTY_TYPE = (By.XPATH,"(//div[normalize-space()='Detached'])[1]")
   FURNISHED_TYPE = (By.XPATH,"(//div[normalize-space()='Furnished'])[1]")
   RENTAL_MARKET = (By.XPATH,"(//div[normalize-space()='Professsionals'])[1]")
@@ -44,10 +44,7 @@ class AddProperty(BasePage):
   CONTRACTED_TENANTS_EVERYONE = (By.XPATH, "//div[contains(text(),'Everyone')]")
   CONTRACTED_TENANTS_LEAD_TENANT = (By.XPATH, "//div[contains(text(),'Lead Tenant')]")
   PAYMENT_RESPONSIBILITY_LEAD = (By.XPATH,"//div[@class='css-146c3p1'][normalize-space()='Lead']")
-
-
-
-
+  SINGLE_TENANT = (By.XPATH, "//div[contains(text(),'Single Tenant')]")
 
 
   def navigate_to_add_property(self):
@@ -74,14 +71,10 @@ class AddProperty(BasePage):
 
     if property_type != "single":
       self.wait.until(EC.element_to_be_clickable(self.MAXIMUM_OCCUPANCY))
-      # time.sleep(5)
       self.click_element(self.MAXIMUM_OCCUPANCY)
-      # time.sleep(5)
-      # self.click_element(self.MAXIMUM_OCCUPANCY)
-      # time.sleep(5)
-
 
     self.click_element(self.BER_CERTIFICATE)
+    self.wait.until(EC.element_to_be_clickable(self.AREA_DIV))
     self.click_element(self.AREA_DIV)
     self.enter_text(self.AREA_INPUT, area)
     self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
@@ -109,16 +102,21 @@ class AddProperty(BasePage):
       self.click_element(self.MULTIPLE_TENANTS)
 
       if group_creator != "tenant":
+        self.wait.until(EC.element_to_be_clickable(self.GROUP_CREATOR_LANDLORD))
         self.click_element(self.GROUP_CREATOR_LANDLORD)
+        # contracted_tenants = None
 
       if payment_responsibility != "lead":
         self.click_element(self.PAYMENT_RESPONSIBILITY_INDIVIDUAL)
 
       else:
         self.click_element(self.PAYMENT_RESPONSIBILITY_LEAD)
-
-      if contracted_tenants != "everyone":
-        self.click_element(self.CONTRACTED_TENANTS_LEAD_TENANT)
+        if contracted_tenants == "lead_tenant":
+          self.click_element(self.CONTRACTED_TENANTS_LEAD_TENANT)
+        elif contracted_tenants == None:
+          pass
+        else:
+          self.click_element(self.CONTRACTED_TENANTS_EVERYONE)
 
       self.click_element(self.NEXT_BUTTON)
 

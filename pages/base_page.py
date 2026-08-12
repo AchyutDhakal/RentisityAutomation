@@ -11,10 +11,9 @@ from selenium.common.exceptions import TimeoutException, ElementClickIntercepted
 import subprocess
 
 class BasePage:
-    # OVERLAY = (By.XPATH, "//div[contains(@class,'backdrop-blur-sm') and contains(@class,'opacity-100')]")
     def __init__(self,driver):
         self.driver = driver
-        timeout = 60 if os.environ.get("JENKINS_URL") else 20
+        timeout = 60 if os.environ.get("JENKINS_URL") else 30
         self.wait = WebDriverWait(driver, timeout)
 
     def find_element(self,locator):
@@ -164,44 +163,32 @@ class BasePage:
             pass
 
 
-    def enter_3ds_otp(self, otp="123456"):
+    def enter_security_code(self, security_code, security_code_locator, submit_button):
         try:
-            WebDriverWait(self.driver, 120).until(
-                lambda d: len([
-                    i for i in d.find_elements(By.TAG_NAME, "iframe")
-                    if i.is_displayed()
-                ]) > 0
+            payment_iframe = self.wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "iframe[title='Secure payment input frame']"))
             )
-
-            iframes = self.driver.find_elements(By.TAG_NAME, "iframe")
-            switched = False
-            for iframe in iframes:
-                if iframe.is_displayed():
-                    self.driver.switch_to.frame(iframe)
-                    switched = True
-                    break
-
-            if not switched:
-                raise TimeoutException("No visible iframe found")
-
+            self.driver.switch_to.frame(payment_iframe)
         except TimeoutException:
             self.take_screenshot("3ds_iframe_not_found")
-            raise TimeoutException("3DS iframe did not appear")
+            raise TimeoutException("Stripe payment iframe did not appear")
 
-        OTP_INPUT = (By.ID, "otp")
-        SUBMIT_BUTTON = (By.ID, "verify-btn")
+        self.wait.until(EC.presence_of_element_located(security_code_locator))
+        self.enter_text(security_code_locator, security_code)
 
-        self.wait.until(
-            EC.presence_of_element_located(OTP_INPUT)
-        )
-        self.enter_text(OTP_INPUT, otp)
-
-        self.wait.until(
-            EC.element_to_be_clickable(SUBMIT_BUTTON)
-        )
-        self.click_element(SUBMIT_BUTTON)
-
+    # Switch back to the main page BEFORE looking for Pay Now — it's outside the iframe
         self.driver.switch_to.default_content()
+
+# Debug: confirm we're really back at top level and can see the button
+        matches = self.driver.find_elements(*submit_button)
+        print(f"PAY_NOW_BUTTON matches after switching back: {len(matches)}")
+        for i, el in enumerate(matches):
+            print(f"  [{i}] displayed={el.is_displayed()}, enabled={el.is_enabled()}")
+
+        self.take_screenshot("debug_before_pay_now")
+
+        self.wait.until(EC.element_to_be_clickable(submit_button))
+        self.click_element(submit_button)
 
 
     def select_all_section_categories(self, dropdown_locator, options_locator):
@@ -391,3 +378,56 @@ class BasePage:
         time.sleep(0.5)
         subprocess.run(['xdotool', 'key', 'Return'], check=True)
         time.sleep(1)
+
+
+
+    def draw_signature(self, canvas_locator):
+        """
+        Draws a simple cursive-style signature on a canvas element using ActionChains.
+        """
+        canvas = self.wait.until(EC.visibility_of_element_located(canvas_locator))
+
+    # Get canvas dimensions to keep the drawing safely within bounds
+        size = canvas.size
+        width = size['width']
+        height = size['height']
+
+    # Scale signature points as a percentage of canvas size,
+    # so it works regardless of the actual canvas dimensions
+        points = [
+        (-width * 0.35, height * 0.1),
+        (-width * 0.25, -height * 0.15),
+        (-width * 0.15, height * 0.15),
+        (-width * 0.05, -height * 0.1),
+        (width * 0.05, height * 0.1),
+        (width * 0.15, -height * 0.15),
+        (width * 0.25, height * 0.05),
+        (width * 0.35, -height * 0.05),
+        ]
+
+        actions = ActionChains(self.driver)
+
+    # Move to starting point and press down
+        actions.move_to_element_with_offset(canvas, points[0][0], points[0][1])
+        actions.click_and_hold()
+
+    # Draw through each subsequent point
+        for dx, dy in points[1:]:
+            actions.move_to_element_with_offset(canvas, dx, dy)
+
+        actions.release()
+        actions.perform()
+
+        time.sleep(0.5)
+
+    # Verify the canvas actually has drawn content (not blank)
+        is_signed = self.driver.execute_script("""
+        var canvas = arguments[0];
+        var blank = document.createElement('canvas');
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+        return canvas.toDataURL() !== blank.toDataURL();
+        """, canvas)
+
+        assert is_signed, "Signature canvas appears blank after drawing attempt"
+        return is_signed
