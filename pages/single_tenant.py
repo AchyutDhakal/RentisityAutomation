@@ -177,8 +177,8 @@ class SingleTenant(BasePage):
     # self.click_element(self.PAY_NOW_BUTTON)
     self.enter_security_code(security_code, self.SECURITY_CODE_INPUT, self.PAY_NOW_BUTTON)
     self.click_element(self.YES_PAY_BUTTON)
+    self.wait.until(EC.invisibility_of_element_located(self.YES_PAY_BUTTON))
     self.driver.refresh()
-    self.wait.until(EC.invisibility_of_element_located(self.SECURITY_DEPOSIT_BUTTON))
     self.wait.until(EC.element_to_be_clickable(self.RELEASE_RENT_BUTTON))
 
 
@@ -193,6 +193,7 @@ class SingleTenant(BasePage):
 
 
   def handover_property(self):
+    time.sleep(1)
     self.click_element(self.CONTRACT_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.RENTED_CONTRACT))
     self.click_element(self.RENTED_CONTRACT)

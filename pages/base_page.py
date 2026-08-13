@@ -39,10 +39,17 @@ class BasePage:
                     raise
                 time.sleep(1)  # wait and retry
 
-    def click_element(self, locator):
-        element = self.find_clickable_element(locator)
-        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
-        self.driver.execute_script("arguments[0].click();", element)
+    def click_element(self, locator, retries=3):
+        for attempt in range(retries):
+            try:
+                element = self.find_clickable_element(locator)
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                self.driver.execute_script("arguments[0].click();", element)
+                return
+            except StaleElementReferenceException:
+                if attempt == retries - 1:
+                    raise
+                time.sleep(0.5)
 
     def get_element_text(self,locator):
         element = self.find_element(locator)
@@ -178,14 +185,6 @@ class BasePage:
 
     # Switch back to the main page BEFORE looking for Pay Now — it's outside the iframe
         self.driver.switch_to.default_content()
-
-# Debug: confirm we're really back at top level and can see the button
-        matches = self.driver.find_elements(*submit_button)
-        print(f"PAY_NOW_BUTTON matches after switching back: {len(matches)}")
-        for i, el in enumerate(matches):
-            print(f"  [{i}] displayed={el.is_displayed()}, enabled={el.is_enabled()}")
-
-        self.take_screenshot("debug_before_pay_now")
 
         self.wait.until(EC.element_to_be_clickable(submit_button))
         self.click_element(submit_button)
