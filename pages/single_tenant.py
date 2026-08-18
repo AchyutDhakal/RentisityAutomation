@@ -155,7 +155,6 @@ class SingleTenant(BasePage):
     self.click_element(self.CONTRACT_BUTTON)
     if person == "tenant":
       self.click_element(self.TENANT_CONTRACT)
-
     else:
       self.click_element(self.LANDLORD_CONTRACT)
 

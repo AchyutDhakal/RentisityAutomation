@@ -13,8 +13,7 @@ import subprocess
 class BasePage:
     def __init__(self,driver):
         self.driver = driver
-        timeout = 60 if os.environ.get("JENKINS_URL") else 30
-        self.wait = WebDriverWait(driver, timeout)
+        self.wait = WebDriverWait(driver, 40)
 
     def find_element(self,locator):
         return self.wait.until(EC.presence_of_element_located(locator))
@@ -26,7 +25,7 @@ class BasePage:
         return self.wait.until(EC.visibility_of_element_located(locator))
 
     def enter_text(self, locator, text):
-        for attempt in range(3):  # retry up to 3 times
+        for attempt in range(3):
             try:
                 element = self.find_clickable_element(locator)
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
@@ -35,9 +34,9 @@ class BasePage:
                 element.send_keys(text)
                 return  # success — exit
             except StaleElementReferenceException:
-                if attempt == 2:  # last attempt failed
+                if attempt == 2:
                     raise
-                time.sleep(1)  # wait and retry
+                time.sleep(1)
 
     def click_element(self, locator, retries=3):
         for attempt in range(retries):

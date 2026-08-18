@@ -26,6 +26,6 @@ SINGLE_TENANT_DATA = [
     "gas_oil": "NOC",
     "internet": "Worldlink",
     "waste": "Fohor",
-    "security_code": 2587,
+    "security_code": 2587
   }
 ]
