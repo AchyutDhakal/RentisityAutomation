@@ -45,6 +45,7 @@ class AddProperty(BasePage):
   CONTRACTED_TENANTS_LEAD_TENANT = (By.XPATH, "//div[contains(text(),'Lead Tenant')]")
   PAYMENT_RESPONSIBILITY_LEAD = (By.XPATH,"//div[@class='css-146c3p1'][normalize-space()='Lead']")
   SINGLE_TENANT = (By.XPATH, "//div[contains(text(),'Single Tenant')]")
+  BODY = (By.TAG_NAME, "body")
 
 
   def navigate_to_add_property(self):
@@ -74,6 +75,10 @@ class AddProperty(BasePage):
       self.click_element(self.MAXIMUM_OCCUPANCY)
 
     self.click_element(self.BER_CERTIFICATE)
+
+    self.click_element(self.BODY)
+    time.sleep(0.3)
+
     self.wait.until(EC.element_to_be_clickable(self.AREA_DIV))
     self.click_element(self.AREA_DIV)
     self.enter_text(self.AREA_INPUT, area)

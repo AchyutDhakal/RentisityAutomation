@@ -52,7 +52,7 @@ class TestSingleTenant:
       self.login_page.login(LANDLORD_EMAIL, LANDLORD_PASSWORD)
 
     with allure.step("Accepting the application"):
-      self.single_tenant.accept_application(tenant_data["title"])
+      self.single_tenant.accept_application(tenant_data["title"], tenant_data["group_creator"])
 
     with allure.step("Generating the contract"):
       self.single_tenant.generate_contract(tenant_data["landlord_address"], tenant_data["bank_name"], tenant_data["account_name"], tenant_data["iban"], tenant_data["bic"], tenant_data["electricity"], tenant_data["gas_oil"], tenant_data["internet"], tenant_data["waste"])

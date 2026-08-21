@@ -13,7 +13,7 @@ import subprocess
 class BasePage:
     def __init__(self,driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 40)
+        self.wait = WebDriverWait(driver, 45)
 
     def find_element(self,locator):
         return self.wait.until(EC.presence_of_element_located(locator))

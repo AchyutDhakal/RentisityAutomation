@@ -13,6 +13,8 @@ def create_driver():
     # options.add_argument("--window-size=1920,1080")
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-password-manager-reauthentication")
+    options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
+
 
     tmpdir = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={tmpdir}")

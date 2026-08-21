@@ -11,7 +11,8 @@ class SingleTenant(BasePage):
   APPLY_BUTTON = (By.XPATH, "//div[@class='css-146c3p1'][normalize-space()='Apply']")
   PROPERTY_REQUEST_BUTTON = (By.XPATH, "//div[contains(text(),'Property Requests')]")
   # PROPERTY_REQUEST = (By.XPATH, "//div[4]//div[1]//div[1]//div[2]//div[1]//div[1]//div[1]//div[1]//div[1]//div[2]//div[1]//div[1]//div[1]//div[1]//div[1]//div[4]")
-  CHECKBOX = (By.XPATH, ".//div[contains(@style,'width: 28px') and contains(@style,'height: 28px') and contains(@style,'border-radius: 8px')]")
+  CHECKBOX_1 = (By.XPATH, "(.//div[contains(@style,'width: 28px') and contains(@style,'height: 28px') and contains(@style,'border-radius: 8px')])[1]")
+  CHECKBOX_2 = (By.XPATH, "(.//div[contains(@style,'width: 28px') and contains(@style,'height: 28px') and contains(@style,'border-radius: 8px')])[2]")
   PUSH_TO_SHORTLIST_BUTTON = (By.XPATH, "//div[contains(text(),'Push To Shortlist')]")
   CONFIRM_BUTON = (By.XPATH, "//div[contains(text(),'Confirm')]")
   SHORTLIST_BUTTON = (By.XPATH, "//div[@class='css-g5y9jx r-1loqt21 r-1otgn73 r-1awozwy r-o7c05e r-wgabs5 r-13awgt0 r-1mmae3n']//div[@class='css-146c3p1'][normalize-space()='Shortlist']")
@@ -67,7 +68,7 @@ class SingleTenant(BasePage):
   HANDOVER_PROPERTY_BUTTON = (By.XPATH, "(//div[normalize-space()='Handover Property'])[2]")
   LOGOUT_BUTTON = (By.XPATH, "//div[contains(text(),'Log Out')]")
   CONFIRM_HANDOVER_BUTTON = (By.XPATH, "//div[contains(text(),'Confirm handover to Tenants ?')]")
-
+  ACCEPT_MULTIPLE_BUTTON = (By.XPATH, "//div[normalize-space()='Accept Multiple']")
 
   def logout(self):
     self.click_element(self.LOGOUT_BUTTON)
@@ -83,7 +84,7 @@ class SingleTenant(BasePage):
     self.click_element(self.APPLY_BUTTON)
     self.wait.until(EC.invisibility_of_element_located(self.APPLY_BUTTON))
 
-  def accept_application(self, title):
+  def accept_application(self, title, group_creator):
     self.click_element(self.PROPERTY_REQUEST_BUTTON)
 
     PROPERTY_REQUEST = (By.XPATH, f"//div[normalize-space()='{title}']")
@@ -92,18 +93,32 @@ class SingleTenant(BasePage):
     self.click_element(PROPERTY_REQUEST)
     # self.click_element(self.APPLICANT)
     self.wait.until(EC.element_to_be_clickable(self.SHORTLIST_BUTTON))
-    self.click_element(self.CHECKBOX)
+
+    if group_creator == "landlord":
+      self.click_element(self.CHECKBOX_2)
+
+    self.click_element(self.CHECKBOX_1)
     self.click_element(self.PUSH_TO_SHORTLIST_BUTTON)
     self.click_element(self.CONFIRM_BUTON)
     self.click_element(self.SHORTLIST_BUTTON)
-    self.click_element(self.CHECKBOX)
-    self.click_element(self.PUSH_TO_VIEWING_BUTTON)
-    self.click_element(self.CONFIRM_BUTON)
-    self.click_element(self.VIEWING_LIST_BUTTON)
-    self.click_element(self.APPLICANT)
-    self.wait.until(EC.element_to_be_clickable(self.ACCEPT_APPLICATION_BUTTON))
-    self.click_element(self.ACCEPT_APPLICATION_BUTTON)
-    self.click_element(self.YES_BUTTON)
+
+    if group_creator == "landlord":
+          self.click_element(self.CHECKBOX_2)
+
+    self.click_element(self.CHECKBOX_1)
+
+    if group_creator == "landlord":
+      self.click_element(self.ACCEPT_MULTIPLE_BUTTON)
+
+    else:
+      self.click_element(self.PUSH_TO_VIEWING_BUTTON)
+      self.click_element(self.CONFIRM_BUTON)
+      self.click_element(self.VIEWING_LIST_BUTTON)
+      self.click_element(self.APPLICANT)
+      self.wait.until(EC.element_to_be_clickable(self.ACCEPT_APPLICATION_BUTTON))
+      self.click_element(self.ACCEPT_APPLICATION_BUTTON)
+      self.click_element(self.YES_BUTTON)
+
     self.click_element(self.REVIEW_AND_COMPLETE_BUTTON)
     self.click_element(self.COMPLETE_BOOKING_BUTTON)
     self.click_element(self.YES_COMPLETE_BUTTON)
@@ -123,6 +138,7 @@ class SingleTenant(BasePage):
     self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
     self.click_element(self.SET_BUTTON)
     self.click_element(self.NEXT_BUTTON)
+
     self.click_element(self.RENT_IN_ADVANCE_NO)
     self.click_element(self.TENANT_ADDRESS_YES)
     self.enter_text(self.LANDLORD_MAILING_ADDRESS_INPUT, landlord_address)
@@ -177,12 +193,14 @@ class SingleTenant(BasePage):
     self.enter_security_code(security_code, self.SECURITY_CODE_INPUT, self.PAY_NOW_BUTTON)
     self.click_element(self.YES_PAY_BUTTON)
     self.wait.until(EC.invisibility_of_element_located(self.YES_PAY_BUTTON))
+    time.sleep(1)
     self.driver.refresh()
-    self.wait.until(EC.element_to_be_clickable(self.RELEASE_RENT_BUTTON))
+    # self.wait.until(EC.element_to_be_clickable(self.RELEASE_RENT_BUTTON))
 
 
 
   def rent_payment(self, security_code):
+    self.wait.until(EC.element_to_be_clickable(self.RELEASE_RENT_BUTTON))
     self.click_element(self.RELEASE_RENT_BUTTON)
     self.click_element(self.CONTINUE_BUTTON)
     self.click_element(self.PAY_BUTTON)
@@ -192,7 +210,7 @@ class SingleTenant(BasePage):
 
 
   def handover_property(self):
-    time.sleep(1)
+    self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON))
     self.click_element(self.CONTRACT_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.RENTED_CONTRACT))
     self.click_element(self.RENTED_CONTRACT)
