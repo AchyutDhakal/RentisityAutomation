@@ -25,18 +25,16 @@ class BasePage:
         return self.wait.until(EC.visibility_of_element_located(locator))
 
     def enter_text(self, locator, text):
-        for attempt in range(3):
-            try:
-                element = self.find_clickable_element(locator)
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
-                element.click()
-                element.clear()
-                element.send_keys(text)
-                return  # success — exit
-            except StaleElementReferenceException:
-                if attempt == 2:
-                    raise
-                time.sleep(1)
+        element = self.find_clickable_element(locator)
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});"
+            "arguments[0].focus();",
+            element
+        )
+
+        element.clear()
+        element.send_keys(str(text))
 
     def click_element(self, locator, retries=3):
         for attempt in range(retries):

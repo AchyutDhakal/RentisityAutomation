@@ -7,6 +7,7 @@ import allure
 import pytest
 from data.single_tenant_data import SINGLE_TENANT_DATA
 import time
+from utils.assertions import assert_true
 
 class TestSingleTenant:
   def setup_method(self):
@@ -97,5 +98,8 @@ class TestSingleTenant:
 
     with allure.step("Handing over the proeprty"):
       self.single_tenant.handover_property()
+
+    with allure.step("Assertion agains the contract status"):
+      assert_true(self.single_tenant.is_element_visible(self.single_tenant.UNDER_CONTRACT_STATUS), "The status of the contract is not under contract", f"{tenant_data['title']}", self.single_tenant)
 
 

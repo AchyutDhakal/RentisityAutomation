@@ -8,6 +8,7 @@ import pytest
 from data.multiple_tenant_data import MULTIPLE_TENANT_DATA
 from config import LANDLORD_EMAIL, LANDLORD_PASSWORD, ADMIN_EMAIL, ADMIN_PASSWORD, TENANT_EMAIL, COTENANT_EMAIL
 import time
+from utils.assertions import assert_true
 
 
 class TestMultipleTenant:
@@ -64,7 +65,7 @@ class TestMultipleTenant:
 
     with allure.step("Accepting the application"):
       if tenant_data["group_creator"] == "landlord":
-        self.single_tenant.accept_application(tenant_data["title"])
+        self.single_tenant.accept_application(tenant_data["title"], tenant_data["group_creator"])
 
       else:
         self.multiple_tenant.accept_application(tenant_data["title"])
@@ -82,13 +83,19 @@ class TestMultipleTenant:
     with allure.step("Login as lead tenant to assign rooms and sign the contract"):
       self.login_page.login(TENANT_EMAIL, LANDLORD_PASSWORD)
 
-    with allure.step("Assigning the rooms"):
-      self.multiple_tenant.assign_rooms()
+    if tenant_data["group_creator"] == "landlord":
+      with allure.step("Signing the contract from lead tenant's account"):
+        self.single_tenant.signature("tenant")
+
+    else:
+      with allure.step("Assigning the rooms"):
+        self.multiple_tenant.assign_rooms()
 
     with allure.step("Logout from lead tenant account after signing the contract"):
       self.single_tenant.logout()
 
     if tenant_data["contract"] != "lead_tenant":
+      print(True)
       with allure.step("Login to co-tenant's account to sign the contract"):
         self.login_page.login(COTENANT_EMAIL, LANDLORD_PASSWORD)
         time.sleep(1)
@@ -146,3 +153,6 @@ class TestMultipleTenant:
 
     with allure.step("Handing over the proeprty"):
       self.single_tenant.handover_property()
+
+    with allure.step("Assertion agains the contract status"):
+      assert_true(self.multiple_tenant.is_element_visible(self.single_tenant.UNDER_CONTRACT_STATUS), "The status of the contract is not under contract", f"{tenant_data['title']}", self.multiple_tenant)

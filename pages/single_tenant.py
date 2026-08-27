@@ -21,7 +21,7 @@ class SingleTenant(BasePage):
   APPLICANT = (By.XPATH, "//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-g5y9jx']//div[@class='css-146c3p1'][normalize-space()='Viewing List']")
   ACCEPT_APPLICATION_BUTTON = (By.XPATH, "//div[@class='css-g5y9jx r-1loqt21 r-1otgn73 r-1awozwy r-kdyh1x r-15pk7w6 r-13awgt0 r-1777fci r-1mmae3n r-is05cd']")
   YES_BUTTON = (By.XPATH, "//div[contains(text(),'Yes')]")
-  REVIEW_AND_COMPLETE_BUTTON = (By.XPATH, "//div[@class='css-g5y9jx r-1loqt21 r-1otgn73 r-1awozwy r-kdyh1x r-15pk7w6 r-13awgt0 r-1777fci r-1mmae3n r-is05cd']//div[@class='css-146c3p1'][normalize-space()='Review and Complete']")
+  REVIEW_AND_COMPLETE_BUTTON = (By.XPATH, "//div[@tabindex='0'][.//div[normalize-space()='Review and Complete']]")
   COMPLETE_BOOKING_BUTTON = (By.XPATH, "//div[normalize-space()='Complete Booking']")
   YES_COMPLETE_BUTTON = (By.XPATH, "//div[contains(text(),'Yes, Complete')]")
   GENERATE_CONTRACT_BUTTON = (By.XPATH, "//div[contains(text(),'Generate Contract')]")
@@ -69,6 +69,8 @@ class SingleTenant(BasePage):
   LOGOUT_BUTTON = (By.XPATH, "//div[contains(text(),'Log Out')]")
   CONFIRM_HANDOVER_BUTTON = (By.XPATH, "//div[contains(text(),'Confirm handover to Tenants ?')]")
   ACCEPT_MULTIPLE_BUTTON = (By.XPATH, "//div[normalize-space()='Accept Multiple']")
+  REVIEW_AND_COMPLETE_BUTTON_SINGLE = (By.XPATH, "//div[@class='css-g5y9jx r-1loqt21 r-1otgn73 r-1awozwy r-kdyh1x r-15pk7w6 r-13awgt0 r-1777fci r-1mmae3n r-is05cd']//div[@class='css-146c3p1'][normalize-space()='Review and Complete']")
+  UNDER_CONTRACT_STATUS = (By.XPATH, "//div[normalize-space()='Under Contract']")
 
   def logout(self):
     self.click_element(self.LOGOUT_BUTTON)
@@ -109,6 +111,7 @@ class SingleTenant(BasePage):
 
     if group_creator == "landlord":
       self.click_element(self.ACCEPT_MULTIPLE_BUTTON)
+      self.click_element(self.REVIEW_AND_COMPLETE_BUTTON)
 
     else:
       self.click_element(self.PUSH_TO_VIEWING_BUTTON)
@@ -118,8 +121,8 @@ class SingleTenant(BasePage):
       self.wait.until(EC.element_to_be_clickable(self.ACCEPT_APPLICATION_BUTTON))
       self.click_element(self.ACCEPT_APPLICATION_BUTTON)
       self.click_element(self.YES_BUTTON)
+      self.click_element(self.REVIEW_AND_COMPLETE_BUTTON_SINGLE)
 
-    self.click_element(self.REVIEW_AND_COMPLETE_BUTTON)
     self.click_element(self.COMPLETE_BOOKING_BUTTON)
     self.click_element(self.YES_COMPLETE_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.GENERATE_CONTRACT_BUTTON))
@@ -188,14 +191,11 @@ class SingleTenant(BasePage):
     self.wait.until(EC.element_to_be_clickable(self.SECURITY_DEPOSIT_BUTTON))
     self.click_element(self.SECURITY_DEPOSIT_BUTTON)
     self.click_element(self.CONTINUE_BUTTON)
-    # self.enter_text(self.SECURITY_CODE_INPUT, security_code)
-    # self.click_element(self.PAY_NOW_BUTTON)
     self.enter_security_code(security_code, self.SECURITY_CODE_INPUT, self.PAY_NOW_BUTTON)
     self.click_element(self.YES_PAY_BUTTON)
     self.wait.until(EC.invisibility_of_element_located(self.YES_PAY_BUTTON))
     time.sleep(1)
     self.driver.refresh()
-    # self.wait.until(EC.element_to_be_clickable(self.RELEASE_RENT_BUTTON))
 
 
 
@@ -211,6 +211,7 @@ class SingleTenant(BasePage):
 
   def handover_property(self):
     self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON))
+    time.sleep(0.5)
     self.click_element(self.CONTRACT_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.RENTED_CONTRACT))
     self.click_element(self.RENTED_CONTRACT)
