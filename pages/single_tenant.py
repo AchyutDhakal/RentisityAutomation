@@ -42,15 +42,15 @@ class SingleTenant(BasePage):
   ACCOUNT_NAME_INPUT = (By.XPATH, "//input[@placeholder='A/c holder name']")
   IBAN_INPUT = (By.XPATH, "//input[@placeholder='IBAN number']")
   BIC_INPUT = (By.XPATH, "//input[@placeholder='BIC']")
-  ELECTRICITY_TENANT = (By.XPATH, "(//div[normalize-space()='Tenant'])[2]")
-  GAS_OIL_TENANT = (By.XPATH, "(//div[normalize-space()='Tenant'])[4]")
-  INTERNET_TENANT = (By.XPATH, "(//div[normalize-space()='Tenant'])[6]")
-  WASTE_TENANT = (By.XPATH, "(//div[normalize-space()='Tenant'])[8]")
+  ELECTRICITY_TENANT = (By.XPATH, "(//div[.//div[text()='Electricity']]//div[@tabindex='0'][.//div[contains(text(), 'Tenant')]])[3]")
+  GAS_OIL_TENANT = (By.XPATH, "(//div[.//div[text()='Gas/oil']]//div[@tabindex='0'][.//div[contains(text(), 'Tenant')]])[4]")
+  INTERNET_TENANT = (By.XPATH, "(//div[.//div[text()='Internet']]//div[@tabindex='0'][.//div[contains(text(), 'Tenant')]])[5]")
+  WASTE_TENANT = (By.XPATH, "(//div[.//div[text()='Waste']]//div[@tabindex='0'][.//div[contains(text(), 'Tenant')]])[6]")
   ELECTRICITY_INPUT = (By.XPATH, "(//input[@placeholder='Company Name'])[1]")
   GAS_OIL_INPUT = (By.XPATH, "(//input[@placeholder='Company Name'])[2]")
   INTERNET_INPUT = (By.XPATH, "(//input[@placeholder='Company Name'])[3]")
   WASTE_INPUT = (By.XPATH, "(//input[@placeholder='Company Name'])[4]")
-  CONTRACT_BUTTON = (By.XPATH, "//div[@class='css-146c3p1 r-dnmrzs r-1udh08x r-1udbk01 r-3s2u2q r-1iln25a r-9iso6'][normalize-space()='Contracts']")
+  CONTRACT_BUTTON = (By.XPATH, "//button[@role='button'][.//div[contains(text(), 'Contracts')]]")
   TENANT_CONTRACT = (By.XPATH, "(//div[normalize-space()='Pending Signatures'])[1]")
   LANDLORD_CONTRACT = (By.XPATH, "(//div[normalize-space()='Tenant Signed'])[1]")
   SIGNED_CONTRACT = (By.XPATH, "(//div[normalize-space()='Contract Signed'])[1]")
@@ -71,6 +71,13 @@ class SingleTenant(BasePage):
   ACCEPT_MULTIPLE_BUTTON = (By.XPATH, "//div[normalize-space()='Accept Multiple']")
   REVIEW_AND_COMPLETE_BUTTON_SINGLE = (By.XPATH, "//div[@class='css-g5y9jx r-1loqt21 r-1otgn73 r-1awozwy r-kdyh1x r-15pk7w6 r-13awgt0 r-1777fci r-1mmae3n r-is05cd']//div[@class='css-146c3p1'][normalize-space()='Review and Complete']")
   UNDER_CONTRACT_STATUS = (By.XPATH, "//div[normalize-space()='Under Contract']")
+  EXTERNAL_PAYMENT = (By.XPATH, "//div[normalize-space()='External Payment']")
+  COFIRM_PAYMENT_MADE_BUTTON = (By.XPATH, "(//div[normalize-space()='Confirm Payment Made'])[3]")
+  REVIEW_RECORDED_PAYMENT_BUTTON = (By.XPATH, "(//div[normalize-space()='Review Recorded Payment'])[5]")
+  CONFIRM_RECEIPT_BUTTON = (By.XPATH, "(//div[normalize-space()='Confirm Receipt'])[2]")
+  UPLOAD_CONTRACT_BUTTON = (By.XPATH, "(//div[normalize-space()='Upload here'])[2]")
+  CONTRACT_CONFIRM_CHECKBOX = (By.XPATH, "//div[contains(text(), 'I confirm')]")
+  CONTRACT_BUTTON_EXTERNAL_PAYMENT = (By.XPATH, "(//button[@role='button'][.//div[contains(text(), 'Contracts')]])[2]")
 
   def logout(self):
     self.click_element(self.LOGOUT_BUTTON)
@@ -128,9 +135,12 @@ class SingleTenant(BasePage):
     self.wait.until(EC.element_to_be_clickable(self.GENERATE_CONTRACT_BUTTON))
 
 
-  def generate_contract(self, landlord_address, bank_name, account_name, iban, bic, electricity, gas_oil, internet, waste):
+  def generate_contract(self, landlord_address, bank_name, account_name, iban, bic, electricity, gas_oil, internet, waste, payment, contract_type, contract_file_path):
     self.click_element(self.GENERATE_CONTRACT_BUTTON)
-    self.click_element(self.SYSTEM_GENERATED_CONTRACT)
+
+    if contract_type == "system":
+      self.click_element(self.SYSTEM_GENERATED_CONTRACT)
+
     self.click_element(self.CONTINUE_BUTTON)
     time.sleep(1)
     self.click_element(self.CONTINUE_BUTTON)
@@ -140,34 +150,44 @@ class SingleTenant(BasePage):
     self.click_element(self.END_DATE)
     self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
     self.click_element(self.SET_BUTTON)
-    self.click_element(self.NEXT_BUTTON)
 
-    self.click_element(self.RENT_IN_ADVANCE_NO)
-    self.click_element(self.TENANT_ADDRESS_YES)
-    self.enter_text(self.LANDLORD_MAILING_ADDRESS_INPUT, landlord_address)
-    self.click_element(self.TENANT_PAYS_PROVIDERS_NO)
-    self.click_element(self.TENANT_PAYS_EQUAL_SHARES_NO)
-    self.click_element(self.DATE_PICKER)
-    self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
-    self.click_element(self.SET_BUTTON)
-    self.click_element(self.DATE_PICKER)
-    self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
-    self.click_element(self.SET_BUTTON)
-    self.click_element(self.TERMINATION_DURING_FIXED_TERM_NO)
-    self.enter_text(self.LANDLORD_BANK_NAME, bank_name)
-    self.enter_text(self.ACCOUNT_NAME_INPUT, account_name)
-    self.enter_text(self.IBAN_INPUT, iban)
-    self.enter_text(self.BIC_INPUT, bic)
-    self.click_element(self.ELECTRICITY_TENANT)
-    self.click_element(self.GAS_OIL_TENANT)
-    self.click_element(self.INTERNET_TENANT)
-    self.click_element(self.WASTE_TENANT)
-    self.enter_text(self.ELECTRICITY_INPUT, electricity)
-    self.enter_text(self.GAS_OIL_INPUT, gas_oil)
-    self.enter_text(self.INTERNET_INPUT, internet)
-    self.enter_text(self.WASTE_INPUT, waste)
+    if payment == "external":
+      self.click_element(self.EXTERNAL_PAYMENT)
+
+    if contract_type == "manual":
+      self.upload_property_photo(contract_file_path, self.UPLOAD_CONTRACT_BUTTON)
+      self.click_element(self.CONTRACT_CONFIRM_CHECKBOX)
+
     self.click_element(self.NEXT_BUTTON)
-    self.wait.until(EC.element_to_be_clickable(self.TENANT_CONTRACT))
+    self.wait.until(EC.invisibility_of_element_located(self.EXTERNAL_PAYMENT))
+
+    if contract_type == "system":
+      self.click_element(self.RENT_IN_ADVANCE_NO)
+      self.click_element(self.TENANT_ADDRESS_YES)
+      self.enter_text(self.LANDLORD_MAILING_ADDRESS_INPUT, landlord_address)
+      self.click_element(self.TENANT_PAYS_PROVIDERS_NO)
+      self.click_element(self.TENANT_PAYS_EQUAL_SHARES_NO)
+      self.click_element(self.DATE_PICKER)
+      self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
+      self.click_element(self.SET_BUTTON)
+      self.click_element(self.DATE_PICKER)
+      self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
+      self.click_element(self.SET_BUTTON)
+      self.click_element(self.TERMINATION_DURING_FIXED_TERM_NO)
+      self.enter_text(self.LANDLORD_BANK_NAME, bank_name)
+      self.enter_text(self.ACCOUNT_NAME_INPUT, account_name)
+      self.enter_text(self.IBAN_INPUT, iban)
+      self.enter_text(self.BIC_INPUT, bic)
+      self.click_element(self.ELECTRICITY_TENANT)
+      self.click_element(self.GAS_OIL_TENANT)
+      self.click_element(self.INTERNET_TENANT)
+      self.click_element(self.WASTE_TENANT)
+      self.enter_text(self.ELECTRICITY_INPUT, electricity)
+      self.enter_text(self.GAS_OIL_INPUT, gas_oil)
+      self.enter_text(self.INTERNET_INPUT, internet)
+      self.enter_text(self.WASTE_INPUT, waste)
+      self.click_element(self.NEXT_BUTTON)
+      self.wait.until(EC.element_to_be_clickable(self.TENANT_CONTRACT))
 
 
   def signature(self, person):
@@ -219,6 +239,37 @@ class SingleTenant(BasePage):
     self.click_element(self.HANDOVER_PROPERTY_BUTTON)
     self.click_element(self.CONFIRM_HANDOVER_BUTTON)
     self.wait.until(EC.invisibility_of_element_located(self.HANDOVER_PROPERTY_BUTTON))
+
+
+  def tenant_confirm_external_payment(self):
+    self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON))
+    time.sleep(0.5)
+    self.click_element(self.CONTRACT_BUTTON)
+    self.wait.until(EC.element_to_be_clickable(self.SIGNED_CONTRACT))
+    self.click_element(self.SIGNED_CONTRACT)
+    self.wait.until(EC.element_to_be_clickable(self.COFIRM_PAYMENT_MADE_BUTTON))
+    self.click_element(self.COFIRM_PAYMENT_MADE_BUTTON)
+    # self.wait.until(EC.invisibility_of_element_located(self.COFIRM_PAYMENT_MADE_BUTTON))
+
+
+  def review_external_payment_and_handover(self):
+    self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON_EXTERNAL_PAYMENT))
+    self.click_element(self.CONTRACT_BUTTON_EXTERNAL_PAYMENT)
+    self.wait.until(EC.element_to_be_clickable(self.SIGNED_CONTRACT))
+    self.click_element(self.SIGNED_CONTRACT)
+    self.wait.until(EC.element_to_be_clickable(self.REVIEW_RECORDED_PAYMENT_BUTTON))
+    self.click_element(self.REVIEW_RECORDED_PAYMENT_BUTTON)
+    self.wait.until(EC.element_to_be_clickable(self.CONFIRM_RECEIPT_BUTTON))
+    self.click_element(self.CONFIRM_RECEIPT_BUTTON)
+    self.wait.until(EC.element_to_be_clickable(self.HANDOVER_PROPERTY_BUTTON))
+    self.click_element(self.HANDOVER_PROPERTY_BUTTON)
+    self.click_element(self.CONFIRM_HANDOVER_BUTTON)
+    self.wait.until(EC.invisibility_of_element_located(self.HANDOVER_PROPERTY_BUTTON))
+
+
+
+  def terminate_contract_tenant(self):
+    pass
 
 
 

@@ -13,7 +13,7 @@ import subprocess
 class BasePage:
     def __init__(self,driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 45)
+        self.wait = WebDriverWait(driver, 50)
 
     def find_element(self,locator):
         return self.wait.until(EC.presence_of_element_located(locator))
@@ -24,17 +24,26 @@ class BasePage:
     def find_visible_element(self,locator):
         return self.wait.until(EC.visibility_of_element_located(locator))
 
-    def enter_text(self, locator, text):
-        element = self.find_clickable_element(locator)
 
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});"
-            "arguments[0].focus();",
-            element
-        )
 
-        element.clear()
-        element.send_keys(str(text))
+    def enter_text(self, locator, text, retries=3):
+        for attempt in range(retries):
+            try:
+                element = self.find_clickable_element(locator)
+                try:
+                    element.click()
+                except ElementClickInterceptedException:
+                # Something is overlaying the element — force-close it and retry the click
+                    self.driver.find_element(By.TAG_NAME, "body").click()
+                    time.sleep(0.3)
+                    self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+                    self.driver.execute_script("arguments[0].click();", element)
+                element.send_keys(str(text))
+                return
+            except StaleElementReferenceException:
+                if attempt == retries - 1:
+                    raise
+                time.sleep(0.5)
 
     def click_element(self, locator, retries=3):
         for attempt in range(retries):

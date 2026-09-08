@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 import time
+from selenium.webdriver.support import expected_conditions as EC
 
 class LoginPage(BasePage):
     SIGN_IN_BUTTON = (By.XPATH,"//div[@tabindex='0' and .//div[contains(normalize-space(text()), 'Sign In')]]")
@@ -9,6 +10,7 @@ class LoginPage(BasePage):
     PROFILE_EMAIL = (By.XPATH, "(//div[@dir='auto'][contains(text(), '@')])[1]")
 
     def login(self, email, password):
+        self.wait.until(EC.element_to_be_clickable(self.SIGN_IN_BUTTON))
         self.click_element(self.SIGN_IN_BUTTON)
         self.enter_text(self.EMAIL_INPUT, email)
         self.enter_text(self.PASSWORD_INPUT, password)
@@ -21,7 +23,7 @@ class LoginPage(BasePage):
             time.sleep(2)
             current_url = self.driver.current_url
             if "/login" not in current_url and current_url != "https://app-staging.rentisity.com/":
-                return  # success — landed on an authenticated page
+                return
             print(f"Login bounced back (attempt {attempt+1}/{max_attempts}), URL: {current_url}. Retrying...")
             time.sleep(2)
         raise Exception(f"Login failed for {email} after {max_attempts} attempts — kept bouncing to /login")

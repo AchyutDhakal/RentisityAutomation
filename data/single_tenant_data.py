@@ -5,6 +5,7 @@ random_number = random.randint(100, 999999)
 random_int = random.randint(1,6)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEST_IMAGE_PATH = os.path.join(BASE_DIR, 'images', f'House_{random_int}.png')
+CONTRACT_FILE_PATH = os.path.join(BASE_DIR, 'contracts', f'Contract_{random_int}.pdf')
 
 SINGLE_TENANT_DATA = [
   {
@@ -26,6 +27,81 @@ SINGLE_TENANT_DATA = [
     "gas_oil": "NOC",
     "internet": "Worldlink",
     "waste": "Fohor",
-    "security_code": 2587
-  }
+    "security_code": 2587,
+    "payment": "internal",
+    "contract_type": "system",
+    "contract_file_path": CONTRACT_FILE_PATH
+  },
+  {
+      "address": "a",
+      "title": f"single_tenant 1{random_number}",
+      "area": random_number,
+      "rent_per_month": random_number,
+      "file_path": TEST_IMAGE_PATH,
+      "property_type": "single",
+      "group_creator": None,
+      "payment_responsibility": None,
+      "contract": None,
+      "landlord_address": "Kathmandu",
+      "bank_name": "Banijya Bank",
+      "account_name": "Mero_bank_account",
+      "iban": 45876,
+      "bic": 26598,
+      "electricity": "NEB",
+      "gas_oil": "NOC",
+      "internet": "Worldlink",
+      "waste": "Fohor",
+      "security_code": 2587,
+      "payment": "external",
+      "contract_type": "system",
+      "contract_file_path": CONTRACT_FILE_PATH
+  },
+  {
+      "address": "a",
+      "title": f"single_tenant 2{random_number}",
+      "area": random_number,
+      "rent_per_month": random_number,
+      "file_path": TEST_IMAGE_PATH,
+      "property_type": "single",
+      "group_creator": None,
+      "payment_responsibility": None,
+      "contract": None,
+      "landlord_address": "Kathmandu",
+      "bank_name": "Banijya Bank",
+      "account_name": "Mero_bank_account",
+      "iban": 45876,
+      "bic": 26598,
+      "electricity": "NEB",
+      "gas_oil": "NOC",
+      "internet": "Worldlink",
+      "waste": "Fohor",
+      "security_code": 2587,
+      "payment": "internal",
+      "contract_type": "manual",
+      "contract_file_path": CONTRACT_FILE_PATH
+    },
+    {
+        "address": "a",
+        "title": f"single_tenant 3{random_number}",
+        "area": random_number,
+        "rent_per_month": random_number,
+        "file_path": TEST_IMAGE_PATH,
+        "property_type": "single",
+        "group_creator": None,
+        "payment_responsibility": None,
+        "contract": None,
+        "landlord_address": "Kathmandu",
+        "bank_name": "Banijya Bank",
+        "account_name": "Mero_bank_account",
+        "iban": 45876,
+        "bic": 26598,
+        "electricity": "NEB",
+        "gas_oil": "NOC",
+        "internet": "Worldlink",
+        "waste": "Fohor",
+        "security_code": 2587,
+        "payment": "external",
+        "contract_type": "manual",
+        "contract_file_path": CONTRACT_FILE_PATH
+    }
 ]

@@ -96,7 +96,7 @@ class AddProperty(BasePage):
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)
 
-
+    self.wait.until(EC.element_to_be_clickable(self.GENERATE_DESCRIPTION_BUTTON))
     self.click_element(self.GENERATE_DESCRIPTION_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.NEXT_BUTTON))
     self.click_element(self.NEXT_BUTTON)

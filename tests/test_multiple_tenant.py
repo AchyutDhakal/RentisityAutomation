@@ -75,7 +75,7 @@ class TestMultipleTenant:
         self.multiple_tenant.landlord_group_generate_contract(tenant_data["monthly_rent"], tenant_data["security_deposit"], tenant_data["landlord_address"], tenant_data["bank_name"], tenant_data["account_name"], tenant_data["iban"], tenant_data["bic"], tenant_data["electricity"], tenant_data["gas_oil"], tenant_data["internet"], tenant_data["waste"])
 
       else:
-        self.single_tenant.generate_contract(tenant_data["landlord_address"], tenant_data["bank_name"], tenant_data["account_name"], tenant_data["iban"], tenant_data["bic"], tenant_data["electricity"], tenant_data["gas_oil"], tenant_data["internet"], tenant_data["waste"])
+        self.single_tenant.generate_contract(tenant_data["landlord_address"], tenant_data["bank_name"], tenant_data["account_name"], tenant_data["iban"], tenant_data["bic"], tenant_data["electricity"], tenant_data["gas_oil"], tenant_data["internet"], tenant_data["waste"], tenant_data["payment"], tenant_data["contract_type"], tenant_data["contract_file_path"])
 
     with allure.step("Logout from landlord"):
       self.single_tenant.logout()
@@ -95,7 +95,6 @@ class TestMultipleTenant:
       self.single_tenant.logout()
 
     if tenant_data["contract"] != "lead_tenant":
-      print(True)
       with allure.step("Login to co-tenant's account to sign the contract"):
         self.login_page.login(COTENANT_EMAIL, LANDLORD_PASSWORD)
         time.sleep(1)
