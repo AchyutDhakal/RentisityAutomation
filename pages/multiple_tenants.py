@@ -74,6 +74,7 @@ class MultipleTenant(BasePage):
   MONTHLY_RENT_INPUT_TENANT2 = (By.XPATH, "(//div[normalize-space()='Monthly Rent']//input[@inputmode='numeric'])[2]")
   SECURITY_DEPOSIT_INPUT_TENANT2 = (By.XPATH, "(//div[normalize-space()='Security Deposit']//input[@inputmode='numeric'])[2]")
   ROOM_NUMBER_BUTTON_LANDLORD = (By.XPATH, "(//div[@class='css-g5y9jx r-1loqt21 r-1otgn73']//div[@class='css-146c3p1'][normalize-space()='Room - 1'])[2]")
+  EXTERNAL_PAYMENT = (By.XPATH, "//div[normalize-space()='External Payment']")
 
 
 
@@ -142,7 +143,7 @@ class MultipleTenant(BasePage):
     self.click_element(self.UPLOAD_BUTTON)
     self.wait.until(EC.invisibility_of_element_located(self.UPLOAD_BUTTON))
 
-  def landlord_group_generate_contract(self, monthly_rent, security_deposit, landlord_address, bank_name, account_name, iban, bic, electricity, gas_oil, internet, waste):
+  def landlord_group_generate_contract(self, monthly_rent, security_deposit, landlord_address, bank_name, account_name, iban, bic, electricity, gas_oil, internet, waste, payment):
     self.click_element(self.GENERATE_CONTRACT_BUTTON)
     self.click_element(self.SYSTEM_GENERATED_CONTRACT)
     self.click_element(self.CONTINUE_BUTTON)
@@ -154,6 +155,10 @@ class MultipleTenant(BasePage):
     self.click_element(self.END_DATE)
     self.wait.until(EC.element_to_be_clickable(self.SET_BUTTON))
     self.click_element(self.SET_BUTTON)
+
+    if payment == "external":
+      self.click_element(self.EXTERNAL_PAYMENT)
+
     self.click_element(self.NEXT_BUTTON)
 
     self.click_element(self.SELECT_LEAD_TENANT_BUTTON)

@@ -10,7 +10,11 @@ class LoginPage(BasePage):
     PROFILE_EMAIL = (By.XPATH, "(//div[@dir='auto'][contains(text(), '@')])[1]")
 
     def login(self, email, password):
-        self.wait.until(EC.element_to_be_clickable(self.SIGN_IN_BUTTON))
+        self.wait.until(EC.presence_of_element_located(self.SIGN_IN_BUTTON))
+        buttons = self.driver.find_elements(*self.SIGN_IN_BUTTON)
+        visible = [b for b in buttons if b.is_displayed()]
+        assert len(visible) >= 1, f"No visible 'Contracts' button found (checked {len(buttons)} matches)"
+        visible[0].click()
         self.click_element(self.SIGN_IN_BUTTON)
         self.enter_text(self.EMAIL_INPUT, email)
         self.enter_text(self.PASSWORD_INPUT, password)

@@ -229,10 +229,15 @@ class SingleTenant(BasePage):
     self.click_element(self.YES_PAY_BUTTON)
 
 
-  def handover_property(self):
-    self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON))
-    time.sleep(0.5)
-    self.click_element(self.CONTRACT_BUTTON)
+  def handover_property(self, group_creator, payment):
+    if group_creator == "landlord" and payment == "external":
+      self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON_EXTERNAL_PAYMENT))
+      self.click_element(self.CONTRACT_BUTTON_EXTERNAL_PAYMENT)
+
+    else:
+      self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON))
+      self.click_element(self.CONTRACT_BUTTON)
+
     self.wait.until(EC.element_to_be_clickable(self.RENTED_CONTRACT))
     self.click_element(self.RENTED_CONTRACT)
     self.wait.until(EC.element_to_be_clickable(self.HANDOVER_PROPERTY_BUTTON))
@@ -242,9 +247,12 @@ class SingleTenant(BasePage):
 
 
   def tenant_confirm_external_payment(self):
-    self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON))
-    time.sleep(0.5)
-    self.click_element(self.CONTRACT_BUTTON)
+    self.wait.until(EC.presence_of_element_located(self.CONTRACT_BUTTON))
+    buttons = self.driver.find_elements(*self.CONTRACT_BUTTON)
+    visible = [b for b in buttons if b.is_displayed()]
+    assert len(visible) >= 1, f"No visible 'Contracts' button found (checked {len(buttons)} matches)"
+    visible[0].click()
+
     self.wait.until(EC.element_to_be_clickable(self.SIGNED_CONTRACT))
     self.click_element(self.SIGNED_CONTRACT)
     self.wait.until(EC.element_to_be_clickable(self.COFIRM_PAYMENT_MADE_BUTTON))
@@ -252,20 +260,31 @@ class SingleTenant(BasePage):
     # self.wait.until(EC.invisibility_of_element_located(self.COFIRM_PAYMENT_MADE_BUTTON))
 
 
-  def review_external_payment_and_handover(self):
-    self.wait.until(EC.element_to_be_clickable(self.CONTRACT_BUTTON_EXTERNAL_PAYMENT))
-    self.click_element(self.CONTRACT_BUTTON_EXTERNAL_PAYMENT)
+  def review_external_payment_and_handover(self, payment_responsiblity):
+    self.wait.until(EC.presence_of_element_located(self.CONTRACT_BUTTON))
+    buttons = self.driver.find_elements(*self.CONTRACT_BUTTON)
+    visible = [b for b in buttons if b.is_displayed()]
+    assert len(visible) >= 1, f"No visible 'Contracts' button found (checked {len(buttons)} matches)"
+    visible[0].click()
+
     self.wait.until(EC.element_to_be_clickable(self.SIGNED_CONTRACT))
     self.click_element(self.SIGNED_CONTRACT)
     self.wait.until(EC.element_to_be_clickable(self.REVIEW_RECORDED_PAYMENT_BUTTON))
     self.click_element(self.REVIEW_RECORDED_PAYMENT_BUTTON)
     self.wait.until(EC.element_to_be_clickable(self.CONFIRM_RECEIPT_BUTTON))
     self.click_element(self.CONFIRM_RECEIPT_BUTTON)
+
+
+    if payment_responsiblity == "individual":
+      self.wait.until(EC.element_to_be_clickable(self.REVIEW_RECORDED_PAYMENT_BUTTON))
+      self.click_element(self.REVIEW_RECORDED_PAYMENT_BUTTON)
+      self.wait.until(EC.element_to_be_clickable(self.CONFIRM_RECEIPT_BUTTON))
+      self.click_element(self.CONFIRM_RECEIPT_BUTTON)
+
     self.wait.until(EC.element_to_be_clickable(self.HANDOVER_PROPERTY_BUTTON))
     self.click_element(self.HANDOVER_PROPERTY_BUTTON)
     self.click_element(self.CONFIRM_HANDOVER_BUTTON)
     self.wait.until(EC.invisibility_of_element_located(self.HANDOVER_PROPERTY_BUTTON))
-
 
 
   def terminate_contract_tenant(self):
