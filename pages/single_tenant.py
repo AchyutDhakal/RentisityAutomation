@@ -206,6 +206,7 @@ class SingleTenant(BasePage):
 
   def security_deposit_payment(self, security_code):
     self.click_element(self.CONTRACT_BUTTON)
+    self.driver.refresh()
     self.wait.until(EC.element_to_be_clickable(self.SIGNED_CONTRACT))
     self.click_element(self.SIGNED_CONTRACT)
     self.wait.until(EC.element_to_be_clickable(self.SECURITY_DEPOSIT_BUTTON))

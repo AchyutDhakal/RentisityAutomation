@@ -88,7 +88,7 @@ class TestSingleTenant:
         self.login_page.click_element(self.login_page.SIGN_IN_BUTTON)
 
     if tenant_data["payment"]=="external":
-      self.single_tenant.tenant_confirm_external_payment(tenant_data["property_type"], tenant_data["group_creator"])
+      self.single_tenant.tenant_confirm_external_payment()
 
     else:
       with allure.step("paying security deposit"):
@@ -104,7 +104,7 @@ class TestSingleTenant:
       self.login_page.login_with_retry(LANDLORD_EMAIL, LANDLORD_PASSWORD)
 
     if tenant_data["payment"] == "external":
-      self.single_tenant.review_external_payment_and_handover(tenant_data["contract_type"], tenant_data["payment"], tenant_data["payment_responsibility"])
+      self.single_tenant.review_external_payment_and_handover(tenant_data["payment_responsibility"])
     else:
       with allure.step("Handing over the proeprty"):
         self.single_tenant.handover_property(tenant_data["group_creator"], tenant_data["payment"])
